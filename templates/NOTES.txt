@@ -7,13 +7,16 @@ To learn more about the release, try:
 
   $ helm status {{ .Release.Name }}
   $ helm get all {{ .Release.Name }}
-
   $ kubectl get pod -n {{ .Release.Namespace }}
 
-Grafana: http://10.85.95.158:3000/
-  user: {{ .Values.grafana.adminUser }} password: {{ .Values.grafana.adminPassword }}
+export SERVICE_IP=$(kubectl get svc -n {{ .Release.Namespace }} {{ .Release.Name }}-grafana -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+ 
+Grafana
+  URL: http://$SERVICE_IP:{{ .Values.grafana.service.port }}/
+  user: {{ .Values.grafana.adminUser }}
+  password: {{ .Values.grafana.adminPassword }}
   influxDb: http://{{ .Release.Name }}-influxdb:8086
-  database: 
+  database: telegraf
 
 
 
