@@ -5,11 +5,12 @@ influxdb:
     user:
       username: "admin"
       password: "contrail123"
-  # config:
-  #   http:
-  #     enabled: "true"
-  #     bind-address: ":8086"
-  #     auth-enabled: "false"
+
+influxdb2:
+  adminUser:
+    user: "admin"
+    password: "contrail123"
+
 telegraf:
   config:
     processors:
@@ -17,10 +18,14 @@ telegraf:
           replace: 
             measurement: /junos/twamp/client/history-test-results/history-single-test-results/probe-single-results/
             dest: /protocol.twamp/
+      - rename:
+          replace: 
+            measurement: /network-instances/network-instance/protocols/protocol/bgp/
+            dest: /protocol.bgp/
     outputs:
       - influxdb:
           urls:
-            - "http://tig2-influxdb:8086"
+            - "http://tig2-influxdb2:8086"
           database: "telegraf"
     inputs:
       - statsd:
@@ -37,13 +42,14 @@ telegraf:
       - jti_openconfig_telemetry:
           servers:
             - "10.85.95.144:32767"
-          username: labroot
-          password: lab123
-          client_id: telegraf-ckim
+          username: root
+          password: contrail123
+          client_id: k3s.pod3
           sample_frequency: 1000ms
           sensors:
             - /interfaces/
             - /junos/twamp/client/history-test-results/history-single-test-results/probe-single-results/
+            - /network-instances/network-instance/protocols/protocol/bgp/
           retry_delay: 1000ms
           str_as_tags: false
 
