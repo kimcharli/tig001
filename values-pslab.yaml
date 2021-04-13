@@ -31,8 +31,8 @@ telegraf:
           server: "udp://:6514"
       - jti_openconfig_telemetry:
           servers:
-            - "10.85.95.144:32767"
-            - "10.85.95.142:32767"
+            - "10.85.192.19:50051"
+            - "10.85.192.16:50051"
           username: labroot
           password: lab123
           client_id: telegraf-ckim
