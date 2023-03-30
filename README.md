@@ -1,20 +1,37 @@
 #
 
-## prerequisite
+## Prerequisite
 
 running kubernetes cluster that can connect to target devices.
 
-TODO: k3 brining up instruction
+```
+juniper@echaz:~$ curl -sfL https://get.k3s.io | sh -
+[sudo] password for juniper: 
+[INFO]  Finding release for channel stable
+[INFO]  Using v1.26.3+k3s1 as release
+[INFO]  Downloading hash https://github.com/k3s-io/k3s/releases/download/v1.26.3+k3s1/sha256sum-amd64.txt
+[INFO]  Downloading binary https://github.com/k3s-io/k3s/releases/download/v1.26.3+k3s1/k3s
+[INFO]  Verifying binary download
+[INFO]  Installing k3s to /usr/local/bin/k3s
+[INFO]  Skipping installation of SELinux RPM
+[INFO]  Skipping /usr/local/bin/kubectl symlink to k3s, already exists
+[INFO]  Creating /usr/local/bin/crictl symlink to k3s
+[INFO]  Creating /usr/local/bin/ctr symlink to k3s
+[INFO]  Creating killall script /usr/local/bin/k3s-killall.sh
+[INFO]  Creating uninstall script /usr/local/bin/k3s-uninstall.sh
+[INFO]  env: Creating environment file /etc/systemd/system/k3s.service.env
+[INFO]  systemd: Creating service file /etc/systemd/system/k3s.service
+[INFO]  systemd: Enabling k3s unit
+Created symlink /etc/systemd/system/multi-user.target.wants/k3s.service → /etc/systemd/system/k3s.service.
+[INFO]  systemd: Starting k3s
+```
+```
+juniper@echaz:~$ sudo cp /etc/rancher/k3s/k3s.yaml .kube/config
+juniper@echaz:~$ ls -l .kube/config 
+-rw------- 1 juniper juniper 2969 Mar 30 15:47 .kube/config
+```
 
 ## kubernetes client environment setup example from ubuntu 22
-
-### create .kube/config file for the target kubernetes access
-```
-ubuntu@u18-s1:~$ vi .kube/config
-
-ubuntu@u18-s1:~$ chmod 600 .kube/config
-```
-
 
 ### create name space "monitoring"
 ```
@@ -23,18 +40,21 @@ ubuntu@u18-s1:~$ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s
                                  Dload  Upload   Total   Spent    Left  Speed
 100   138  100   138    0     0    522      0 --:--:-- --:--:-- --:--:--   524
 100 45.8M  100 45.8M    0     0  39.7M      0  0:00:01  0:00:01 --:--:-- 76.0M
+
 ubuntu@u18-s1:~$ file kubectl
 kubectl: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=Yy5FBkueqYSzta95c4tS/vtOCidrqdMF9COmBxdRn/1e9a_vqM25o5Z6TT97bA/7Bczl83i536EKvzRRb5A, stripped
-ubuntu@u18-s1:~$
+
 ubuntu@u18-s1:~$ sudo mv kubectl /usr/local/bin/
+
 ubuntu@u18-s1:~$ sudo chmod +x /usr/local/bin/kubectl 
+
 ubuntu@u18-s1:~$ kubectl version
 WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
 Client Version: version.Info{Major:"1", Minor:"26", GitVersion:"v1.26.3", GitCommit:"9e644106593f3f4aa98f8a84b23db5fa378900bd", GitTreeState:"clean", BuildDate:"2023-03-15T13:40:17Z", GoVersion:"go1.19.7", Compiler:"gc", Platform:"linux/amd64"}
 Kustomize Version: v4.5.7
 Server Version: version.Info{Major:"1", Minor:"24", GitVersion:"v1.24.4+k3s1", GitCommit:"c3f830e9b9ed8a4d9d0e2aa663b4591b923a296e", GitTreeState:"clean", BuildDate:"2022-08-25T03:45:26Z", GoVersion:"go1.18.1", Compiler:"gc", Platform:"linux/amd64"}
 WARNING: version difference between client (1.26) and server (1.24) exceeds the supported minor version skew of +/-1
-ubuntu@u18-s1:~$ 
+
 ubuntu@u18-s1:~$ kubectl create ns monitoring
 namespace/monitoring created
 ubuntu@u18-s1:~$ 
@@ -50,7 +70,7 @@ Downloading https://get.helm.sh/helm-v3.11.2-linux-amd64.tar.gz
 Verifying checksum... Done.
 Preparing to install helm into /usr/local/bin
 helm installed into /usr/local/bin/helm
-ubuntu@u18-s1:~$
+
 ubuntu@u18-s1:~$ helm version
 version.BuildInfo{Version:"v3.11.2", GitCommit:"912ebc1cd10d38d340f048efaf0abda047c3468e", GitTreeState:"clean", GoVersion:"go1.18.10"}
 ubuntu@u18-s1:~$
@@ -67,20 +87,23 @@ remote: Compressing objects: 100% (85/85), done.
 remote: Total 119 (delta 32), reused 115 (delta 28), pack-reused 0
 Receiving objects: 100% (119/119), 66.08 KiB | 1.38 MiB/s, done.
 Resolving deltas: 100% (32/32), done.
-ubuntu@u18-s1:~$
+
 ubuntu@u18-s1:~$ cd tig001/
 ubuntu@u18-s1:~/tig001$
+
 ubuntu@u18-s1:~/tig001$ helm repo add influxdata https://influxdata.github.io/helm-charts
 "influxdata" has been added to your repositories
 ubuntu@u18-s1:~/tig001$ helm repo add grafana https://grafana.github.io/helm-charts
 "grafana" has been added to your repositories
 ubuntu@u18-s1:~/tig001$
+
 ubuntu@u18-s1:~/tig001$ helm repo update
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "influxdata" chart repository
 ...Successfully got an update from the "grafana" chart repository
 Update Complete. ⎈Happy Helming!⎈
 ubuntu@u18-s1:~/tig001$
+
 ubuntu@u18-s1:~/tig001$ helm dependency build
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "influxdata" chart repository
@@ -92,6 +115,7 @@ Downloading telegraf from repo https://influxdata.github.io/helm-charts
 Downloading grafana from repo https://grafana.github.io/helm-charts
 Deleting outdated charts
 ubuntu@u18-s1:~/tig001$ 
+
 ubuntu@u18-s1:~/tig001$ helm install tig2 . -n monitoring
 NAME: tig2
 LAST DEPLOYED: Thu Mar 30 15:15:51 2023
@@ -125,23 +149,35 @@ ubuntu@u18-s1:~/tig001$
 
 ```
 
-## bring up
+## bring up steps
 
 ```
+curl -sfL https://get.k3s.io | sh -
+sudo cp /etc/rancher/k3s/k3s.yaml .kube/config
+ls -l .kube/config 
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+file kubectl
+sudo mv kubectl /usr/local/bin/
+sudo chmod +x /usr/local/bin/kubectl
+kubectl version
+kubectl create ns monitoring
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+helm version
+git clone git@github.com:kimcharli/tig001.git
+cd tig001/
 helm repo add influxdata https://influxdata.github.io/helm-charts
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-
-kubectl create ns monitoring
-
 helm dependency build
-
 ```
-
 Adjust values.yaml before proceeding. Then start chart.
 ```
+vi values.yaml
 helm install tig2 . -n monitoring
+helm ls -n monitoring
 ```
+
+
 
 An example.
 ```
@@ -193,6 +229,8 @@ kubectl delete pod -n monitoring -l app.kubernetes.io/name=telegraf
 
 
 ## grafana
+
+TODO
 
 ## junos config
 
