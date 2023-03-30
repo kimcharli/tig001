@@ -1,6 +1,9 @@
 
 
 influxdb:
+  enabled: true
+  name: influxdb
+  version: 4.12.1
   setDefaultUser:
     user:
       username: "admin"
@@ -11,6 +14,7 @@ influxdb:
   #     bind-address: ":8086"
   #     auth-enabled: "false"
 telegraf:
+  enabled: true
   config:
     outputs:
       - influxdb:
@@ -31,11 +35,11 @@ telegraf:
           server: "udp://:6514"
       - jti_openconfig_telemetry:
           servers:
-            - "10.85.95.144:32767"
-            - "10.85.95.142:32767"
+            - "10.85.192.14:32767"
+            - "10.85.192.16:32767"
           username: labroot
           password: lab123
-          client_id: telegraf-ckim
+          client_id: telegraf-ckim # make it unique
           sample_frequency: 10000ms
           sensors:
             - /interfaces/
@@ -71,6 +75,7 @@ telegraf:
       #             name: ifDescr
       #             is_tag: "true"
 grafana:
+  enabled: true
   adminUser: admin
   adminPassword: contrail123
   # ingress:
