@@ -3,6 +3,9 @@
 ## prerequisite
 
 running kubernetes cluster that can connect to target devices.
+<div align="left">
+  <img src="./images/tig001.png" width="40%" height="40%" alt="k8s diagram" />
+</div>
 
 TODO: k3 brining up instruction
 
