@@ -1,5 +1,11 @@
 #
 
+## prerequisite
+
+running kubernetes cluster that can connect to target devices.
+
+TODO: k3 brining up instruction
+
 ## kubernetes client environment setup example from ubuntu 22
 
 ### create .kube/config file for the target kubernetes access
