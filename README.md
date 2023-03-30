@@ -6,8 +6,9 @@ Based on helm v3
 ## bring up
 
 ```
-helm repo add influxdata https://helm.influxdata.com/
+helm repo add influxdata https://influxdata.github.io/helm-charts
 helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
 
 kubectl create ns monitoring
 
